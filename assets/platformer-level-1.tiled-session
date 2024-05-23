@@ -4,6 +4,24 @@
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
+        "": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "C:/Users/alw/AppData/Local/Temp/10130457-48da-4d5a-a7aa-e21ecb1f2a9a_kenney_pixel-platformer.zip.a9a/Tiled/tilemap-example-a.tmx": {
+            "scale": 1.9284188034188032,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 234.38891966759005,
+                "y": 183.8293628808864
+            }
+        },
+        "C:/Users/alw/AppData/Local/Temp/10130457-48da-4d5a-a7aa-e21ecb1f2a9a_kenney_pixel-platformer.zip.a9a/Tiled/tileset-characters.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/alw/AppData/Local/Temp/10130457-48da-4d5a-a7aa-e21ecb1f2a9a_kenney_pixel-platformer.zip.a9a/Tiled/tileset-tiles.tsx": {
+            "scaleInDock": 1
+        },
         "C:/Users/alw/Desktop/CMPM 120/Plat/assets/3adesign1 copy.tmx": {
             "scale": 2.6507638888888887,
             "selectedLayer": 0,
@@ -39,30 +57,43 @@
             "scaleInDock": 1
         },
         "C:/Users/alw/Desktop/CMPM 120/Plat/assets/platformer-level-1.tmx": {
-            "scale": 2.6507638888888887,
+            "scale": 2,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 174.47800686384954,
-                "y": 225.40672238086506
+                "x": 151,
+                "y": 240.75
             }
         },
         "C:/Users/alw/Desktop/CMPM 120/Plat/assets/platformer-level-1.tmx#kenny_tilemap_packed": {
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
+        "C:/Users/alw/Desktop/CMPM 120/Plat/assets/platformer-level-1.tmx#tilemap-backgrounds_packed": {
+            "scaleInDock": 1
+        },
         "platformer-level-1.tmj": {
             "expandedObjectLayers": [
                 5
             ],
-            "scale": 3,
+            "scale": 0.75,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 379.5,
-                "y": 182.16666666666663
+                "x": 113.33333333333331,
+                "y": 331.33333333333337
             }
         },
+        "platformer-level-1.tmj#backgroundColorForest": {
+            "scaleInDock": 0.25
+        },
         "platformer-level-1.tmj#kenny_tilemap_packed": {
-            "scaleInDock": 1
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "platformer-level-1.tmj#tilemap-backgrounds_packed": {
+            "scaleInEditor": 1
+        },
+        "platformer-level-1.tmj#tilemap-backgrounds_packed.png": {
+            "scaleInEditor": 1
         },
         "platformer-level-1.tmx": {
             "scale": 2,
@@ -78,6 +109,7 @@
         }
     },
     "last.exportedFilePath": "C:/Users/alw/Desktop/CMPM 120/Adventure-Quest/assets",
+    "last.imagePath": "C:/Users/alw/Desktop/CMPM 120/Adventure-Quest/assets",
     "map.lastUsedExportFilter": "All Files (*)",
     "map.lastUsedFormat": "json",
     "openFiles": [
@@ -87,8 +119,16 @@
     "property.type": "bool",
     "recentFiles": [
         "C:/Users/alw/Desktop/CMPM 120/Plat/assets/platformer-level-1.tmx",
+        "C:/Users/alw/AppData/Local/Temp/10130457-48da-4d5a-a7aa-e21ecb1f2a9a_kenney_pixel-platformer.zip.a9a/Tiled/tilemap-example-a.tmx",
         "C:/Users/alw/Desktop/CMPM 120/Plat/assets/3adesign1.tmx",
         "platformer-level-1.tmx",
         "C:/Users/alw/Desktop/CMPM 120/Plat/assets/3adesign1 copy.tmx"
-    ]
+    ],
+    "tileset.embedInMap": true,
+    "tileset.margin": 0,
+    "tileset.spacing": 0,
+    "tileset.tileSize": {
+        "height": 18,
+        "width": 18
+    }
 }

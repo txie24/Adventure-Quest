@@ -11,6 +11,7 @@ class Platformer extends Phaser.Scene {
         this.JUMP_VELOCITY = -500;
         this.PARTICLE_VELOCITY = 50;
         this.SCALE = 2.0;
+        this.LIVES = 3;
     }
 
     create() {
@@ -22,15 +23,22 @@ class Platformer extends Phaser.Scene {
         // First parameter: name we gave the tileset in Tiled
         // Second parameter: key for the tilesheet (from this.load.image in Load.js)
         this.tileset = this.map.addTilesetImage("kenny_tilemap_packed", "tilemap_tiles");
+        this.tilesetBg = this.map.addTilesetImage("tilemap-backgrounds", "tilemap-backgrounds");
 
-        // Create layers
+        // Create the background layer first
+        this.backGroundLayer = this.map.createLayer("BG", this.tilesetBg, 0, 0);
+
+        // Create other layers
         this.groundLayer = this.map.createLayer("Ground-n-Platforms", this.tileset, 0, 0);
         this.killableLayer = this.map.createLayer("Killables", this.tileset, 0, 0);
         this.overlayLayer = this.map.createLayer("Overlays", this.tileset, 0, 0);
-        
-        // Make the ground and killable layers collidable
+        this.waterLayer = this.map.createLayer("Water", this.tileset, 0, 0);
+        this.Flag = this.map.createLayer("Flag", this.tileset, 0, 0);
+
+        // Make the ground, killable, and water layers collidable
         this.groundLayer.setCollisionByProperty({ collides: true });
         this.killableLayer.setCollisionByProperty({ collides: true });
+        this.waterLayer.setCollisionByProperty({ collides: true });
 
         this.coins = this.map.createFromObjects("Objects", {
             name: "coin",
@@ -62,6 +70,11 @@ class Platformer extends Phaser.Scene {
             this.scene.restart(); // Restart the scene when player touches the killable layer
         });
 
+        // Handle collision detection with water layer
+        this.physics.add.collider(my.sprite.player, this.waterLayer, () => {
+            this.loseLife();
+        });
+
         // set up Phaser-provided cursor key input
         cursors = this.input.keyboard.createCursorKeys();
 
@@ -69,8 +82,8 @@ class Platformer extends Phaser.Scene {
 
         // debug key listener (assigned to D key)
         this.input.keyboard.on('keydown-D', () => {
-            this.physics.world.drawDebug = this.physics.world.drawDebug ? false : true
-            this.physics.world.debugGraphic.clear()
+            this.physics.world.drawDebug = this.physics.world.drawDebug ? false : true;
+            this.physics.world.debugGraphic.clear();
         }, this);
 
         // Add movement vfx here
@@ -89,31 +102,51 @@ class Platformer extends Phaser.Scene {
         this.cameras.main.setDeadzone(50, 50);
         this.cameras.main.setZoom(this.SCALE);
 
-        // Create a container for the moving platforms
-        this.movingPlatformContainer = this.add.container(550, 297);
+        // Create an array for the moving platforms
+        this.movingPlatforms = [];
 
-        // Add individual platform images to the container
-        const platform1 = this.add.image(9, 9, "sprite_tiles", "48").setScale(1);
-        const platform2 = this.add.image(27, 9, "sprite_tiles", "49").setScale(1);
-        const platform3 = this.add.image(45, 9, "sprite_tiles", "50").setScale(1);
-        
-        this.movingPlatformContainer.add([platform1, platform2, platform3]);
+        // Define the properties for multiple moving platforms
+        const platformProperties = [
+            { x: 550, y: 297, minX: 440, maxX: 550 },
+            { x: 800, y: 297, minX: 720, maxX: 885 },
+            { x: 890, y: 297, minX: 890, maxX: 1050 },
+        ];
 
-        // Enable physics on the container
-        this.physics.world.enable(this.movingPlatformContainer);
-        this.movingPlatformContainer.body.setImmovable(true);
-        this.movingPlatformContainer.body.allowGravity = false;
-        this.movingPlatformContainer.body.setVelocityX(100);
+        // Create moving platform containers
+        platformProperties.forEach(props => {
+            let container = this.add.container(props.x, props.y);
 
-        // Set container size to match the platforms
-        this.movingPlatformContainer.body.setSize(54, 18);
+            // Add individual platform images to the container
+            const platform1 = this.add.image(9, 9, "sprite_tiles", "48").setScale(1);
+            const platform2 = this.add.image(27, 9, "sprite_tiles", "49").setScale(1);
+            const platform3 = this.add.image(45, 9, "sprite_tiles", "50").setScale(1);
+            
+            container.add([platform1, platform2, platform3]);
 
-        // Enable collision handling for the moving platform container
-        this.physics.add.collider(my.sprite.player, this.movingPlatformContainer);
+            // Enable physics on the container
+            this.physics.world.enable(container);
+            container.body.setImmovable(true);
+            container.body.allowGravity = false;
+            container.body.setVelocityX(100);
 
-        // Set platform boundaries
-        this.platformMinX = 440;
-        this.platformMaxX = 550;
+            // Set container size to match the platforms
+            container.body.setSize(54, 18);
+
+            // Enable collision handling for the moving platform container
+            this.physics.add.collider(my.sprite.player, container);
+
+            // Store the platform properties and container
+            this.movingPlatforms.push({
+                container: container,
+                minX: props.minX,
+                maxX: props.maxX
+            });
+        });
+
+        // Add lives display
+        this.livesText = this.add.text(16, 16, 'Lives: 3', { fontSize: '32px', fill: '#fff' });
+        this.livesText.setScrollFactor(0);
+        this.livesText.setDepth(10); // Ensure the text is on top of other game objects
     }
 
     update() {
@@ -162,11 +195,23 @@ class Platformer extends Phaser.Scene {
             this.scene.restart();
         }
 
-        // Update moving platform container
-        if (this.movingPlatformContainer.x >= this.platformMaxX) {
-            this.movingPlatformContainer.body.setVelocityX(-40);
-        } else if (this.movingPlatformContainer.x <= this.platformMinX) {
-            this.movingPlatformContainer.body.setVelocityX(40);
+        // Update each moving platform container
+        this.movingPlatforms.forEach(platform => {
+            if (platform.container.x >= platform.maxX) {
+                platform.container.body.setVelocityX(-40);
+            } else if (platform.container.x <= platform.minX) {
+                platform.container.body.setVelocityX(40);
+            }
+        });
+    }
+
+    loseLife() {
+        this.LIVES--;
+        this.livesText.setText('Lives: ' + this.LIVES);
+        if (this.LIVES <= 0) {
+            this.scene.restart(); // Restart the scene when out of lives
+        } else {
+            my.sprite.player.setPosition(90, 100); // Reset player position
         }
     }
 }
