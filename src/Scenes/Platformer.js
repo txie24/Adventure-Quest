@@ -21,17 +21,24 @@ class Platformer extends Phaser.Scene {
         // Second parameter: key for the tilesheet (from this.load.image in Load.js)
         this.tileset = this.map.addTilesetImage("kenny_tilemap_packed", "tilemap_tiles");
 
-        // Create a layer
+        // Create layers
         this.groundLayer = this.map.createLayer("Ground-n-Platforms", this.tileset, 0, 0);
-        this.groundLayer.setScale(2.0);
+        this.killableLayer = this.map.createLayer("Killables", this.tileset, 0, 0);
+        this.overlayLayer = this.map.createLayer("Overlays", this.tileset, 0, 0);
 
-        // Make it collidable
-        this.groundLayer.setCollisionByProperty({
-            collides: true
-        });
+        // Scale the layers
+        this.groundLayer.setScale(2.0);
+        this.killableLayer.setScale(2.0);
+        this.overlayLayer.setScale(2.0);
+
+        // Make the ground layer collidable
+        this.groundLayer.setCollisionByProperty({ collides: true });
+
+        // Bring the overlays layer to the top
+        this.overlayLayer.setDepth(1);
 
         // set up player avatar
-        my.sprite.player = this.physics.add.sprite(game.config.width / 4, game.config.height / 2, "platformer_characters", "tile_0000.png").setScale(SCALE);
+        my.sprite.player = this.physics.add.sprite(100, 200, "platformer_characters", "tile_0000.png").setScale(SCALE);
         my.sprite.player.setCollideWorldBounds(true);
 
         // Enable collision handling
@@ -45,7 +52,6 @@ class Platformer extends Phaser.Scene {
             this.physics.world.drawDebug = this.physics.world.drawDebug ? false : true;
             this.physics.world.debugGraphic.clear();
         }, this);
-
     }
 
     update() {
@@ -54,13 +60,11 @@ class Platformer extends Phaser.Scene {
             my.sprite.player.body.setAccelerationX(-this.ACCELERATION);
             my.sprite.player.resetFlip();
             my.sprite.player.anims.play('walk', true);
-
         } else if (cursors.right.isDown) {
             // have the player accelerate to the right
             my.sprite.player.body.setAccelerationX(this.ACCELERATION);
             my.sprite.player.setFlip(true, false);
             my.sprite.player.anims.play('walk', true);
-
         } else {
             // set acceleration to 0 and have DRAG take over
             my.sprite.player.body.setAccelerationX(0);
