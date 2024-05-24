@@ -1,3 +1,4 @@
+// main.js
 // Jim Whitehead
 // Created: 4/14/2024
 // Phaser: 3.70.0
@@ -31,7 +32,7 @@ let config = {
     },
     width: 1440,
     height: 720,
-    scene: [Load, Platformer]
+    scene: [Load, SceneMainMenu, Platformer]
 }
 
 var cursors;
