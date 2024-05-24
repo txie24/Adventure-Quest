@@ -10,6 +10,11 @@ class SceneMainMenu extends Phaser.Scene {
         this.load.image("sprBtnPlay", "sprBtnPlay.png");
         this.load.image("sprBtnPlayHover", "sprBtnPlayHover.png");
         this.load.image("sprBtnPlayDown", "sprBtnPlayDown.png");
+        this.load.image("sprBtnRestart", "sprBtnRestart.png");
+        this.load.image("sprBtnRestartHover", "sprBtnRestartHover.png");
+        this.load.image("sprBtnRestartDown", "sprBtnRestartDown.png");
+        this.load.image("sprBtnReset", "sprBtnReset.png");
+        this.load.image("sprBtnResetHover", "sprBtnResetHover.png");
         this.load.image("sprBg0", "sprBg0.png");
         this.load.audio("sndBtnOver", "sndBtnOver.wav");
         this.load.audio("sndBtnDown", "sndBtnDown.wav");

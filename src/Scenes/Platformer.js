@@ -81,6 +81,11 @@ class Platformer extends Phaser.Scene {
             }
         });
 
+        // Add collision with the Flag layer to trigger the win screen
+        this.physics.add.collider(my.sprite.player, this.Flag, () => {
+            this.scene.start("SceneWin");
+        });
+
         cursors = this.input.keyboard.createCursorKeys();
         this.rKey = this.input.keyboard.addKey('R');
 
@@ -91,12 +96,14 @@ class Platformer extends Phaser.Scene {
 
         my.vfx = {};
         my.vfx.walking = this.add.particles(0, 0, "kenny-particles", {
-            frame: ['smoke_03.png', 'smoke_09.png'],
-            scale: { start: 0.03, end: 0.1 },
+            frame: ['smoke_08.png', 'smoke_09.png'],
+            scale: { start: 0.04, end: 0.01 },
             lifespan: 350,
             alpha: { start: 1, end: 0.1 },
+            frequency: 100 // Adjust this value to emit particles more slowly
         });
         my.vfx.walking.stop();
+        
 
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
         this.cameras.main.startFollow(my.sprite.player, true, 0.25, 0.25);
@@ -159,16 +166,16 @@ class Platformer extends Phaser.Scene {
             my.sprite.player.setAccelerationX(-speed);
             my.sprite.player.resetFlip();
             my.sprite.player.anims.play('walk', true);
-            my.vfx.walking.startFollow(my.sprite.player, my.sprite.player.displayWidth / 2 - 10, my.sprite.player.displayHeight / 2 - 5, false);
+            my.vfx.walking.startFollow(my.sprite.player, -my.sprite.player.displayWidth / 2 + 10, my.sprite.player.displayHeight / 2 - 5, false);
             my.vfx.walking.setParticleSpeed(this.PARTICLE_VELOCITY, 0);
             if (my.sprite.player.body.blocked.down) {
                 my.vfx.walking.start();
             }
         } else if (cursors.right.isDown) {
             my.sprite.player.setAccelerationX(speed);
-            my.sprite.player.setFlip(true, false);
+            my.sprite.player.setFlipX(true); // Ensure the player is facing the right direction
             my.sprite.player.anims.play('walk', true);
-            my.vfx.walking.startFollow(my.sprite.player, my.sprite.player.displayWidth / 2 + 10, my.sprite.player.displayHeight / 2 - 5, false);
+            my.vfx.walking.startFollow(my.sprite.player, my.sprite.player.displayWidth / 2 - 10, my.sprite.player.displayHeight / 2 - 5, false);
             my.vfx.walking.setParticleSpeed(-this.PARTICLE_VELOCITY, 0);
             if (my.sprite.player.body.blocked.down) {
                 my.vfx.walking.start();
@@ -210,7 +217,7 @@ class Platformer extends Phaser.Scene {
         this.LIVES--;
         this.updateStats();
         if (this.LIVES <= 0) {
-            this.scene.restart();
+            this.scene.start("SceneGameOver");
         } else {
             my.sprite.player.setPosition(90, 100);
         }
