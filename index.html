@@ -20,17 +20,29 @@
             height: 720px; 
             border: 1px solid #fff;
         }
-        #control-panel {
+        #Stats-panel {
             width: 210px;
-            height: 300px;
+            height: 100px;
             background-color: #333;
-            margin-left: 20px;
+            margin-top: -400px;
             padding: 10px;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
             justify-content: start;
         }
+        #control-panel {
+            width: 210px;
+            height: 270px;
+            background-color: #333;
+            margin-left: -210px;
+            padding: 10px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
+        }
+        
         h2, p {
             margin: 0 0 10px 0;
         }
@@ -42,6 +54,11 @@
 </head>
 <body>
     <div id="phaser-game"></div>
+    <div id="Stats-panel">
+        <h2>Game Stats</h2>
+        <p id="lives">Lives: 3</p>
+        <p id="keys">Keys: 0</p>
+    </div>
     <div id="control-panel">
         <h2>How To Play</h2>
         <p>Collect 3 keys to open the gate</p>
@@ -51,7 +68,6 @@
         <p>↑ - Jump</p>
         <p>D - Debug Mod</p>
         <p>R - Reset</p>
-        
     </div>
     <span id="description"></span>
 </body>

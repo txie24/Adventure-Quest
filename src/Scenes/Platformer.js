@@ -54,7 +54,6 @@ class Platformer extends Phaser.Scene {
         my.sprite.player.setCollideWorldBounds(true);
 
         this.physics.add.collider(my.sprite.player, this.groundLayer);
-
         this.physics.add.overlap(my.sprite.player, this.coinGroup, (obj1, obj2) => {
             obj2.destroy();
         });
@@ -62,6 +61,7 @@ class Platformer extends Phaser.Scene {
         this.physics.add.overlap(my.sprite.player, this.keyGroup, (obj1, obj2) => {
             obj2.destroy();
             this.keyCount++;
+            this.updateStats();
         });
 
         this.physics.add.collider(my.sprite.player, this.killableLayer, () => {
@@ -72,17 +72,15 @@ class Platformer extends Phaser.Scene {
             this.loseLife();
         });
 
-        // Add collision handler for the gate
         this.physics.add.collider(my.sprite.player, this.Gate, () => {
             if (this.keyCount >= 3) {
                 this.physics.world.removeCollider(this.physics.world.colliders.getActive().find(collider => collider.object1 === my.sprite.player && collider.object2 === this.Gate));
                 this.Gate.setCollisionByProperty({ collides: false });
-                this.Gate.visible = false; // Optional: Hide the gate visually
+                this.Gate.visible = false;
             }
         });
 
         cursors = this.input.keyboard.createCursorKeys();
-
         this.rKey = this.input.keyboard.addKey('R');
 
         this.input.keyboard.on('keydown-D', () => {
@@ -132,9 +130,18 @@ class Platformer extends Phaser.Scene {
             });
         });
 
-        this.livesText = this.add.text(16, 16, 'Lives: 3', { fontSize: '32px', fill: '#fff' });
+        // Create text objects for Lives and Keys in the Phaser scene
+        this.livesText = this.add.text(16, 16, `Lives: ${this.LIVES}`, { fontSize: '32px', fill: '#fff' });
         this.livesText.setScrollFactor(0);
         this.livesText.setDepth(10);
+
+        this.keysText = this.add.text(16, 48, `Keys: ${this.keyCount}`, { fontSize: '32px', fill: '#fff' });
+        this.keysText.setScrollFactor(0);
+        this.keysText.setDepth(10);
+
+        // DOM elements for updating HTML
+        this.livesElement = document.getElementById('lives');
+        this.keysElement = document.getElementById('keys');
     }
 
     update() {
@@ -147,7 +154,6 @@ class Platformer extends Phaser.Scene {
             if (my.sprite.player.body.blocked.down) {
                 my.vfx.walking.start();
             }
-
         } else if (cursors.right.isDown) {
             my.sprite.player.setAccelerationX(this.ACCELERATION);
             my.sprite.player.setFlip(true, false);
@@ -157,7 +163,6 @@ class Platformer extends Phaser.Scene {
             if (my.sprite.player.body.blocked.down) {
                 my.vfx.walking.start();
             }
-
         } else {
             my.sprite.player.setAccelerationX(0);
             if (my.sprite.player.body.blocked.down) {
@@ -189,17 +194,24 @@ class Platformer extends Phaser.Scene {
                 platform.container.body.setVelocityX(40);
             }
         });
-
-
     }
 
     loseLife() {
         this.LIVES--;
-        this.livesText.setText('Lives: ' + this.LIVES);
+        this.updateStats();
         if (this.LIVES <= 0) {
             this.scene.restart();
         } else {
             my.sprite.player.setPosition(90, 100);
         }
+    }
+
+    updateStats() {
+        // Update Phaser text objects
+        this.livesText.setText(`Lives: ${this.LIVES}`);
+        this.keysText.setText(`Keys: ${this.keyCount}`);
+        // Update DOM elements
+        this.livesElement.textContent = `Lives: ${this.LIVES}`;
+        this.keysElement.textContent = `Keys: ${this.keyCount}`;
     }
 }
