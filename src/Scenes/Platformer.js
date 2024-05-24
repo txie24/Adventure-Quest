@@ -12,6 +12,7 @@ class Platformer extends Phaser.Scene {
         this.SCALE = 2.0;
         this.LIVES = 3;
         this.keyCount = 0;
+        this.CROUCH_SPEED = 50;  // New property for crouch speed
     }
 
     create() {
@@ -50,7 +51,7 @@ class Platformer extends Phaser.Scene {
         this.coinGroup = this.add.group(this.coins);
         this.keyGroup = this.add.group(this.keys);
 
-        my.sprite.player = this.physics.add.sprite(90, 100, "platformer_characters", "tile_0000.png");
+        my.sprite.player = this.physics.add.sprite(1100, 100, "platformer_characters", "tile_0000.png");
         my.sprite.player.setCollideWorldBounds(true);
 
         this.physics.add.collider(my.sprite.player, this.groundLayer);
@@ -145,8 +146,17 @@ class Platformer extends Phaser.Scene {
     }
 
     update() {
+        let speed = this.ACCELERATION;
+
+        if (cursors.down.isDown && my.sprite.player.body.blocked.down) {
+            speed = this.CROUCH_SPEED;
+            my.sprite.player.setScale(1, 0.7);
+        } else if (cursors.down.isUp) {
+            my.sprite.player.setScale(1);
+        }
+
         if (cursors.left.isDown) {
-            my.sprite.player.setAccelerationX(-this.ACCELERATION);
+            my.sprite.player.setAccelerationX(-speed);
             my.sprite.player.resetFlip();
             my.sprite.player.anims.play('walk', true);
             my.vfx.walking.startFollow(my.sprite.player, my.sprite.player.displayWidth / 2 - 10, my.sprite.player.displayHeight / 2 - 5, false);
@@ -155,7 +165,7 @@ class Platformer extends Phaser.Scene {
                 my.vfx.walking.start();
             }
         } else if (cursors.right.isDown) {
-            my.sprite.player.setAccelerationX(this.ACCELERATION);
+            my.sprite.player.setAccelerationX(speed);
             my.sprite.player.setFlip(true, false);
             my.sprite.player.anims.play('walk', true);
             my.vfx.walking.startFollow(my.sprite.player, my.sprite.player.displayWidth / 2 + 10, my.sprite.player.displayHeight / 2 - 5, false);
@@ -207,10 +217,8 @@ class Platformer extends Phaser.Scene {
     }
 
     updateStats() {
-        // Update Phaser text objects
         this.livesText.setText(`Lives: ${this.LIVES}`);
         this.keysText.setText(`Keys: ${this.keyCount}`);
-        // Update DOM elements
         this.livesElement.textContent = `Lives: ${this.LIVES}`;
         this.keysElement.textContent = `Keys: ${this.keyCount}`;
     }
