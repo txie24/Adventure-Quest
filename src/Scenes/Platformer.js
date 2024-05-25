@@ -19,7 +19,7 @@ class Platformer extends Phaser.Scene {
         this.PARTICLE_VELOCITY = 50;
         this.SCALE = 2.0;
         this.LIVES = 3;
-        this.keyCount = 3;
+        this.keyCount = 0;
         this.CROUCH_SPEED = 50;  
     }
 
@@ -65,7 +65,7 @@ class Platformer extends Phaser.Scene {
         this.coinGroup = this.add.group(this.coins);
         this.keyGroup = this.add.group(this.keys);
 
-        my.sprite.player = this.physics.add.sprite(1100, 100, "platformer_characters", "tile_0000.png");
+        my.sprite.player = this.physics.add.sprite(90, 100, "platformer_characters", "tile_0000.png");
         my.sprite.player.setCollideWorldBounds(true);
 
         this.physics.add.collider(my.sprite.player, this.groundLayer);
