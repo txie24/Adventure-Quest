@@ -19,7 +19,7 @@ class Platformer extends Phaser.Scene {
         this.PARTICLE_VELOCITY = 50;
         this.SCALE = 2.0;
         this.LIVES = 3;
-        this.keyCount = 0;
+        this.keyCount = 3;
         this.CROUCH_SPEED = 50;  
     }
 
@@ -33,7 +33,6 @@ class Platformer extends Phaser.Scene {
         this.killableLayer = this.map.createLayer("Killables", this.tileset, 0, 0);
         this.overlayLayer = this.map.createLayer("Overlays", this.tileset, 0, 0);
         this.waterLayer = this.map.createLayer("Water", this.tileset, 0, 0);
-        this.Flag = this.map.createLayer("Flag", this.tileset, 0, 0);
         this.Gate = this.map.createLayer("Gate", this.tileset, 0, 0);
 
         this.groundLayer.setCollisionByProperty({ collides: true });
@@ -52,14 +51,21 @@ class Platformer extends Phaser.Scene {
             key: "tilemap_sheet",
             frame: 27
         });
+        this.flag = this.map.createFromObjects("Flag", {
+            name: "flag",
+            key: "tilemap_sheet",
+            frame: 131
+        });
 
         this.physics.world.enable(this.coins, Phaser.Physics.Arcade.STATIC_BODY);
         this.physics.world.enable(this.keys, Phaser.Physics.Arcade.STATIC_BODY);
+        this.physics.world.enable(this.flag, Phaser.Physics.Arcade.STATIC_BODY);
+
 
         this.coinGroup = this.add.group(this.coins);
         this.keyGroup = this.add.group(this.keys);
 
-        my.sprite.player = this.physics.add.sprite(90, 100, "platformer_characters", "tile_0000.png");
+        my.sprite.player = this.physics.add.sprite(1100, 100, "platformer_characters", "tile_0000.png");
         my.sprite.player.setCollideWorldBounds(true);
 
         this.physics.add.collider(my.sprite.player, this.groundLayer);
@@ -73,6 +79,11 @@ class Platformer extends Phaser.Scene {
             this.sound.play('keySound');
             this.keyCount++;
             this.updateStats();
+        });
+
+        this.physics.add.collider(my.sprite.player, this.groundLayer);
+        this.physics.add.overlap(my.sprite.player, this.flag, (obj1, obj2) => {
+        this.scene.start("SceneWin");
         });
 
         this.physics.add.collider(my.sprite.player, this.killableLayer, () => {
@@ -91,9 +102,6 @@ class Platformer extends Phaser.Scene {
             }
         });
 
-        this.physics.add.collider(my.sprite.player, this.Flag, () => {
-            this.scene.start("SceneWin");
-        });
 
         cursors = this.input.keyboard.createCursorKeys();
         this.rKey = this.input.keyboard.addKey('R');
