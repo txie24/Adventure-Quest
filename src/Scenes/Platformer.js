@@ -3,6 +3,14 @@ class Platformer extends Phaser.Scene {
         super("platformerScene");
     }
 
+    preload() {
+        this.load.setPath("./assets/");
+        this.load.audio('coinSound', 'Coinsound.wav');  
+        this.load.audio('jumpSound', 'jumpsound.mp3');  
+        this.load.audio('keySound', 'Keysound.wav');  
+
+    }
+
     init() {
         this.ACCELERATION = 200;
         this.DRAG = 1000;
@@ -12,7 +20,7 @@ class Platformer extends Phaser.Scene {
         this.SCALE = 2.0;
         this.LIVES = 3;
         this.keyCount = 0;
-        this.CROUCH_SPEED = 50;  // New property for crouch speed
+        this.CROUCH_SPEED = 50;  
     }
 
     create() {
@@ -51,16 +59,18 @@ class Platformer extends Phaser.Scene {
         this.coinGroup = this.add.group(this.coins);
         this.keyGroup = this.add.group(this.keys);
 
-        my.sprite.player = this.physics.add.sprite(1100, 100, "platformer_characters", "tile_0000.png");
+        my.sprite.player = this.physics.add.sprite(90, 100, "platformer_characters", "tile_0000.png");
         my.sprite.player.setCollideWorldBounds(true);
 
         this.physics.add.collider(my.sprite.player, this.groundLayer);
         this.physics.add.overlap(my.sprite.player, this.coinGroup, (obj1, obj2) => {
             obj2.destroy();
+            this.sound.play('coinSound');
         });
 
         this.physics.add.overlap(my.sprite.player, this.keyGroup, (obj1, obj2) => {
             obj2.destroy();
+            this.sound.play('keySound');
             this.keyCount++;
             this.updateStats();
         });
@@ -81,7 +91,6 @@ class Platformer extends Phaser.Scene {
             }
         });
 
-        // Add collision with the Flag layer to trigger the win screen
         this.physics.add.collider(my.sprite.player, this.Flag, () => {
             this.scene.start("SceneWin");
         });
@@ -100,7 +109,7 @@ class Platformer extends Phaser.Scene {
             scale: { start: 0.04, end: 0.01 },
             lifespan: 350,
             alpha: { start: 1, end: 0.1 },
-            frequency: 100 // Adjust this value to emit particles more slowly
+            frequency: 100 
         });
         my.vfx.walking.stop();
         
@@ -138,7 +147,6 @@ class Platformer extends Phaser.Scene {
             });
         });
 
-        // Create text objects for Lives and Keys in the Phaser scene
         this.livesText = this.add.text(16, 16, `Lives: ${this.LIVES}`, { fontSize: '32px', fill: '#fff' });
         this.livesText.setScrollFactor(0);
         this.livesText.setDepth(10);
@@ -147,7 +155,6 @@ class Platformer extends Phaser.Scene {
         this.keysText.setScrollFactor(0);
         this.keysText.setDepth(10);
 
-        // DOM elements for updating HTML
         this.livesElement = document.getElementById('lives');
         this.keysElement = document.getElementById('keys');
     }
@@ -173,7 +180,7 @@ class Platformer extends Phaser.Scene {
             }
         } else if (cursors.right.isDown) {
             my.sprite.player.setAccelerationX(speed);
-            my.sprite.player.setFlipX(true); // Ensure the player is facing the right direction
+            my.sprite.player.setFlipX(true); 
             my.sprite.player.anims.play('walk', true);
             my.vfx.walking.startFollow(my.sprite.player, my.sprite.player.displayWidth / 2 - 10, my.sprite.player.displayHeight / 2 - 5, false);
             my.vfx.walking.setParticleSpeed(-this.PARTICLE_VELOCITY, 0);
@@ -198,6 +205,7 @@ class Platformer extends Phaser.Scene {
 
         if (my.sprite.player.body.blocked.down && Phaser.Input.Keyboard.JustDown(cursors.up)) {
             my.sprite.player.body.setVelocityY(this.JUMP_VELOCITY);
+            this.sound.play('jumpSound');  
         }
 
         if (Phaser.Input.Keyboard.JustDown(this.rKey)) {
